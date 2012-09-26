@@ -33,7 +33,8 @@ class Menu extends CI_Model {
 	{
 		// Set a couple of menu items
 		$CI = CodeIgniter::instance();
-		$this->Demo = $CI->config->site_url('demo');
+		$this->Home = $CI->config->site_url('demo');
+		$this->Info = $CI->config->site_url('demo/info');
 		$this->Admin = $CI->config->site_url('admin');
 	}
 }

@@ -25,42 +25,53 @@
  * @filesource
  */
 
-class Admin extends CI_Controller {
+class Util extends CI_Controller {
 	/**
-	 * Constructor
+	 * Count the files in the routed directory
+	 *
+	 * @return	int		Directory file count
 	 */
-	public function __construct()
+	public function dircount()
 	{
-		// Call parent first
-		parent::__construct();
+		// Get the path and scan the directory
+		$count = 0;
+		$dir = $this->CI->router->fetch_path().'controllers/';
+		foreach (scandir($dir) as $file)
+		{
+			// Check for php extension
+			if (pathinfo($file, PATHINFO_EXTENSION) == 'php')
+			{
+				++$count;
+			}
+		}
 
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
+		return $count;
 	}
 
 	/**
-	 * Default handler
+	 * Count the characters in an argument
+	 *
+	 * @param	string	Word to count
 	 */
-	public function index()
-   	{
-		// Load and run auth required
-		// It only produces output when a login is necessary,
-		// in which case it will exit and bypass the code below.
-		$this->CI->load->controller('auth/required');
+	public function arglen($word)
+	{
+		// Count the characters and append output (who needs a view?)
+		$count = strlen($word);
+		$this->CI->output->append_output('The argument "'.$word.'" has '.$count.' characters.');
+	}
 
-		// Load and run header template
-		$this->CI->load->controller('template/header');
+	/**
+	 * Generate output on another stack level
+	 */
+	public function stacked()
+	{
+		// Push a new stack level
+		$this->CI->output->stack_push();
 
-		// Load admin view
-		$this->CI->load->view('admin');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
+		// Load a view for some output
+		$this->CI->load->view('stacked', array('method' => __METHOD__));
 	}
 }
 
-/* End of file admin.php */
-/* Location: ./application/controllers/admin.php */
+/* End of file util.php */
+/* Location: ./application/controllers/util.php */

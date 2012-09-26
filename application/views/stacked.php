@@ -24,43 +24,8 @@
  * @since		Version 1.0
  * @filesource
  */
-
-class Admin extends CI_Controller {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		// Call parent first
-		parent::__construct();
-
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
-	}
-
-	/**
-	 * Default handler
-	 */
-	public function index()
-   	{
-		// Load and run auth required
-		// It only produces output when a login is necessary,
-		// in which case it will exit and bypass the code below.
-		$this->CI->load->controller('auth/required');
-
-		// Load and run header template
-		$this->CI->load->controller('template/header');
-
-		// Load admin view
-		$this->CI->load->view('admin');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
-	}
-}
-
-/* End of file admin.php */
-/* Location: ./application/controllers/admin.php */
+?>
+<p style="font-style: italic;">
+ The output of this view, called from <?php echo $method; ?>, goes into another
+ level of the output stack. If we didn't want to use it, we could just pop it off the stack.
+</p>

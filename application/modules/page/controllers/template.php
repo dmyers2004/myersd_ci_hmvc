@@ -46,6 +46,9 @@ class Template extends CI_Controller {
 		// Get routed class name
 		$class = get_class($this->CI->routed);
 
+		// Add routed function name
+		$class .= ' '.$this->CI->router->fetch_method();
+
 		// Load header template
 		$this->CI->load->view('header', array('class' => $class));
 	}

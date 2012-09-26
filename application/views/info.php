@@ -24,43 +24,13 @@
  * @since		Version 1.0
  * @filesource
  */
-
-class Admin extends CI_Controller {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		// Call parent first
-		parent::__construct();
-
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
-	}
-
-	/**
-	 * Default handler
-	 */
-	public function index()
-   	{
-		// Load and run auth required
-		// It only produces output when a login is necessary,
-		// in which case it will exit and bypass the code below.
-		$this->CI->load->controller('auth/required');
-
-		// Load and run header template
-		$this->CI->load->controller('template/header');
-
-		// Load admin view
-		$this->CI->load->view('admin');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
-	}
-}
-
-/* End of file admin.php */
-/* Location: ./application/controllers/admin.php */
+?>
+<h2>Controller Info</h2>
+<p>This page called another Controller to get some information by requesting the method return value:</p>
+<code>There are <?php echo $count; ?> Controllers in the directory our request routed to.</code>
+<p>Then it called a different Controller method with an argument and captured the output:</p>
+<code><?php echo $out; ?></code>
+<p>Next it checked the validity of a route:</p>
+<code>"<?php echo $baduri; ?>" is<?php echo ($badroute? '' : ' not'); ?> a valid route.</code>
+<p>Finally, it validated another route:</p>
+<code>"<?php echo $gooduri; ?>" resolved to:<br /><?php var_dump($goodroute); ?></code>

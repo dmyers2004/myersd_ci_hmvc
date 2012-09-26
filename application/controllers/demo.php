@@ -50,10 +50,53 @@ class Demo extends CI_Controller {
 		$this->CI->load->controller('template/header');
 
 		// Load view
-        $this->CI->load->view('demo');
+		$this->CI->load->view('demo');
 
 		// Load and run footer template
 		$this->CI->load->controller('template/footer');
+	}
+
+	/**
+	 * Get some information from another controller
+	 */
+	public function info()
+	{
+		$args = array();
+
+		// Here, we call another Controller and get the return value of the method.
+		$args['count'] = $this->CI->load->controller('util/dircount', '', TRUE);
+
+		// Now we will call a method with an argument and capture the output
+		$this->CI->load->controller_output($args['out'], 'util/arglen/Supercalifragilisticexpialidocious');
+
+		// Next, we'll check and see if a route is valid
+		$args['baduri'] = 'page/absent/call';
+		$args['badroute'] = $this->CI->router->validate_route($args['baduri']);
+
+		// Finally, check a valid route
+		$args['gooduri'] = 'util/stacked';
+		$args['goodroute'] = $this->CI->router->validate_route($args['gooduri']);
+
+		// Load and run header template
+		$this->CI->load->controller('template/header');
+
+		// Load view in next stack level
+		$this->CI->output->stack_push();
+		$this->CI->load->view('info', $args);
+
+		// If the good route was valid, call it
+		if ($args['goodroute'])
+		{
+			// If we pass the router stack from validate_route,
+			// we don't have to resolve the route all over again
+			$this->CI->load->controller($args['goodroute']);
+		}
+
+		// Load and run footer template in final stack level
+		$this->CI->output->stack_push();
+		$this->CI->load->controller('template/footer');
+
+		// When the output gets displayed, all those stack levels will get collapsed
 	}
 }
 
