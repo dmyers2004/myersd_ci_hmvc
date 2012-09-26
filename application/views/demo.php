@@ -24,38 +24,17 @@
  * @since		Version 1.0
  * @filesource
  */
-
-class Demo extends CI_Controller {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		// Call parent first
-		parent::__construct();
-
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
-	}
-
-	/**
-	 * Default handler
-	 */
-	public function index()
-   	{
-		// Load and run header template
-		$this->CI->load->controller('template/header');
-
-		// Load view
-        $this->CI->load->view('demo');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
-	}
-}
-
-/* End of file demo.php */
-/* Location: ./application/controllers/demo.php */
+?>
+<h2>HMVC Demo</h2>
+<p>
+ This simple page makes use of a "module" in the application directory, which contains its own
+ Controller, Model, and two Views. The module path is added as a package path so those resources
+ can be loaded as if they were directly in the application directory, even though they live in
+ their own special subfolder hierarchy.
+</p>
+<p>
+ The module in this case is a page template. The Controller offers two methods: one to load the
+ page header, and one to load the page footer. The Model is a representation of the page menu near
+ the top, which makes it easy to manipulate what shows up on the menu for various different pages.
+ The views contain the HTML for the actual header and footer.
+</p>

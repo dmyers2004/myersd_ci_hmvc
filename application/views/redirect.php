@@ -24,38 +24,15 @@
  * @since		Version 1.0
  * @filesource
  */
-
-class Demo extends CI_Controller {
-	/**
-	 * Constructor
-	 */
-	public function __construct()
-	{
-		// Call parent first
-		parent::__construct();
-
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
-	}
-
-	/**
-	 * Default handler
-	 */
-	public function index()
-   	{
-		// Load and run header template
-		$this->CI->load->controller('template/header');
-
-		// Load view
-        $this->CI->load->view('demo');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
-	}
-}
-
-/* End of file demo.php */
-/* Location: ./application/controllers/demo.php */
+?>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Redirecting...</title>
+</head>
+<body>
+<script type="text/javascript">
+location.replace('<?php echo $url; ?>');
+</script>
+</body>
+</html>

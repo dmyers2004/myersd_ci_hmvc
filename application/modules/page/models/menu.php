@@ -25,37 +25,18 @@
  * @filesource
  */
 
-class Demo extends CI_Controller {
+class Menu extends CI_Model {
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		// Call parent first
-		parent::__construct();
-
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
-	}
-
-	/**
-	 * Default handler
-	 */
-	public function index()
-   	{
-		// Load and run header template
-		$this->CI->load->controller('template/header');
-
-		// Load view
-        $this->CI->load->view('demo');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
+		// Set a couple of menu items
+		$CI = CodeIgniter::instance();
+		$this->Demo = $CI->config->site_url('demo');
+		$this->Admin = $CI->config->site_url('admin');
 	}
 }
 
-/* End of file demo.php */
-/* Location: ./application/controllers/demo.php */
+/* End of file template.php */
+/* Location: ./application/controllers/template.php */

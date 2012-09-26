@@ -27,11 +27,27 @@
 
 class Template extends CI_Controller {
 	/**
+	 * Constructor
+	 */
+	public function __construct()
+	{
+		// Call parent first
+		parent::__construct();
+
+		// Load menu if not already done
+		$this->CI->load->model('menu');
+	}
+
+	/**
 	 * Page header
 	 */
 	public function header()
 	{
-		$this->CI->load->view('header');
+		// Get routed class name
+		$class = get_class($this->CI->routed);
+
+		// Load header template
+		$this->CI->load->view('header', array('class' => $class));
 	}
 
 	/**
@@ -39,6 +55,7 @@ class Template extends CI_Controller {
 	 */
 	public function footer()
 	{
+		// Load footer template
 		$this->CI->load->view('footer');
 	}
 }

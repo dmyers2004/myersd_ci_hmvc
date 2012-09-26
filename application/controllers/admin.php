@@ -25,7 +25,7 @@
  * @filesource
  */
 
-class Demo extends CI_Controller {
+class Admin extends CI_Controller {
 	/**
 	 * Constructor
 	 */
@@ -46,16 +46,21 @@ class Demo extends CI_Controller {
 	 */
 	public function index()
    	{
+		// Load and run auth required
+		// It only produces output when a login is necessary,
+		// in which case it will exit and bypass the code below.
+		$this->CI->load->controller('auth/required');
+
 		// Load and run header template
 		$this->CI->load->controller('template/header');
 
-		// Load view
-        $this->CI->load->view('demo');
+        // Load admin view
+        $this->CI->load->view('admin');
 
 		// Load and run footer template
 		$this->CI->load->controller('template/footer');
 	}
 }
 
-/* End of file demo.php */
-/* Location: ./application/controllers/demo.php */
+/* End of file admin.php */
+/* Location: ./application/controllers/admin.php */
