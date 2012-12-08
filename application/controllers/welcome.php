@@ -46,6 +46,13 @@ class Welcome extends CI_Controller {
 	{
 		$this->load->view('welcome_message');
 	}
+	
+	public function test() {
+		CI()->load->model('post_model');
+		echo CI()->post_model->say('hello world');
+		echo CI()->load->view('cookies');
+	}
+	
 }
 
 /* End of file welcome.php */

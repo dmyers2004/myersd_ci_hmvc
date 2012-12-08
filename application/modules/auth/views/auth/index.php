@@ -1,0 +1,1 @@
+this is the auth index.php page

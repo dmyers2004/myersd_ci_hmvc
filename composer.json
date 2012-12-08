@@ -1,6 +1,8 @@
 {
     "require": {
-        "mikey179/vfsStream": "*"
+        "mikey179/vfsStream": "*",
+        "pyrocms/lex": "2.2.*"
+
     },
     "require-dev": {
 		"EHER/PHPUnit": "*"

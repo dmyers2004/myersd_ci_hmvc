@@ -25,48 +25,18 @@
  * @filesource
  */
 
-class Template extends CI_Controller {
+class Menu extends CI_Model {
 	/**
 	 * Constructor
 	 */
 	public function __construct()
 	{
-		// Call parent first
-		parent::__construct();
-
-		// Load menu if not already done
-		$this->CI->load->model('menu');
+		// Set a couple of menu items
+		$CI = CodeIgniter::instance();
+		$this->Home = $CI->config->site_url('demo');
+		$this->Info = $CI->config->site_url('demo/info');
+		$this->Admin = $CI->config->site_url('admin');
 	}
-
-	/**
-	 * Page header
-	 */
-	public function header()
-	{
-		// Get routed class name
-		$class = get_class($this->CI->routed);
-
-		// Add routed function name
-		$class .= ' '.$this->CI->router->fetch_method();
-
-		// Load header template
-		$this->CI->load->view('header', array('class' => $class));
-	}
-
-	/**
-	 * Page footer
-	 */
-	public function footer()
-	{
-		// Load footer template
-		$this->CI->load->view('footer');
-	}
-	
-	public function myers() {
-		$this->CI->load->view('myers');
-		CI()->load->view('blog/cookies');
-	}
-	
 }
 
 /* End of file template.php */
