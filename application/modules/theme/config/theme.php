@@ -4,6 +4,7 @@
 
 $config['debug'] = true;
 
+/* theme front end js/css/images & backend views */
 $config['theme folder'] = 'themes';
 $config['module folder'] = 'modules';
 
@@ -14,6 +15,9 @@ $config['search path'] = array();
 $config['autoload'] = array(
 	'css'		=> array(),
 	'js'		=> array(),
-	'meta'	=> array(),
+	'meta'	=> array('Name'=>'Don Myers'),
 	'extra'	=> array()
 );
+
+$config['title'] = 'My Site';
+$config['section divider'] = ' / ';

@@ -25,7 +25,7 @@
  * @filesource
  */
 
-class Auth extends CI_Controller {
+class Controller_Auth extends Public_Controller {
 	/**
 	 * Constructor
 	 */

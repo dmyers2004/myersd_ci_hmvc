@@ -93,7 +93,7 @@ class lex_plugin {
 		$this->content = $content;
 	}
 	
-	public function get($name,$default) {
+	public function get($name,$default=NULL) {
 		return (isset($this->args[$name])) ? $this->args[$name] : $default;
 	}
 }

@@ -25,7 +25,7 @@
  * @filesource
  */
 
-class Util extends CI_Controller {
+class Controller_Util extends Public_Controller {
 	/**
 	 * Count the files in the routed directory
 	 *

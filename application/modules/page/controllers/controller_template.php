@@ -25,7 +25,7 @@
  * @filesource
  */
 
-class Admin extends CI_Controller {
+class Controller_template extends Public_Controller {
 	/**
 	 * Constructor
 	 */
@@ -34,33 +34,40 @@ class Admin extends CI_Controller {
 		// Call parent first
 		parent::__construct();
 
-		// Add package path for our template module
-		// This could also be done in config/autoload.php:
-		// $autoload['packages'] = array(realpath(dirname(__FILE__).'/../modules/page/'));
-		$module = realpath(dirname(__FILE__).'/../modules/page/');
-		$this->CI->load->add_package_path($module);
+		// Load menu if not already done
+		$this->CI->load->model('menu');
 	}
 
 	/**
-	 * Default handler
+	 * Page header
 	 */
-	public function index()
-   	{
-		// Load and run auth required
-		// It only produces output when a login is necessary,
-		// in which case it will exit and bypass the code below.
-		$this->CI->load->controller('auth/required');
+	public function header()
+	{
+		// Get routed class name
+		$class = get_class($this->CI->routed);
 
-		// Load and run header template
-		$this->CI->load->controller('template/header');
+		// Add routed function name
+		$class .= ' '.$this->CI->router->fetch_method();
 
-		// Load admin view
-		$this->CI->load->view('admin');
-
-		// Load and run footer template
-		$this->CI->load->controller('template/footer');
+		// Load header template
+		$this->CI->load->view('header', array('class' => $class));
 	}
+
+	/**
+	 * Page footer
+	 */
+	public function footer()
+	{
+		// Load footer template
+		$this->CI->load->view('footer');
+	}
+	
+	public function myers() {
+		$this->CI->load->view('myers');
+		CI()->load->view('blog/cookies');
+	}
+	
 }
 
-/* End of file admin.php */
-/* Location: ./application/controllers/admin.php */
+/* End of file template.php */
+/* Location: ./application/controllers/template.php */

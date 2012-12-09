@@ -3,3 +3,5 @@
 /* add this package */
 $autoload['packages'][] = dirname(dirname(__FILE__)).'/';
 
+$autoload['libraries'][] = 'theme';
+

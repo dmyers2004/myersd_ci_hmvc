@@ -78,7 +78,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'email', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('session','data','parser','assets');
+$autoload['libraries'] = array('session','data','parser');
 
 
 /*
@@ -153,9 +153,7 @@ $autoload['language'] = array();
 
 $autoload['model'] = array();
 
-/* Include any CI 3.0 Modules autoload.php files */
-$modules = glob(APPPATH.'modules/*');
-foreach ($modules as $m) @include($m.'/config/autoload.php');
-
 /* End of file autoload.php */
 /* Location: ./application/config/autoload.php */
+
+require(APPPATH.'third_party/init.php');

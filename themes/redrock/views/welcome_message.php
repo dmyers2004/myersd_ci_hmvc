@@ -1,0 +1,1 @@
+<h1>red rock theme welcome message</h1>

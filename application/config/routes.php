@@ -64,8 +64,17 @@
 |
 */
 
-$route['default_controller'] = 'welcome';
+$route['default_controller'] = 'main';
 $route['404_override'] = '';
+
+//$route['module/(:any)'] = 'controller_module/index/$1';
+//$route['admin/(:any)'] = 'controller_admin/index/$1';
+
+$route['(:any)/(:any)/(:any)/(:any)/(:any)'] = "controller_$1/$2/$3/$4/$5";
+$route['(:any)/(:any)/(:any)/(:any)'] = "controller_$1/$2/$3/$4";
+$route['(:any)/(:any)/(:any)'] = "controller_$1/$2/$3";
+$route['(:any)/(:any)'] = "controller_$1/$2";
+$route['(:any)'] = "controller_$1";
 
 /* End of file routes.php */
 /* Location: ./application/config/routes.php */

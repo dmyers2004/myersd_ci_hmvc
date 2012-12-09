@@ -1,4 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 /**
  * CodeIgniter
  *
@@ -25,49 +26,42 @@
  * @filesource
  */
 
-class Template extends CI_Controller {
-	/**
-	 * Constructor
-	 */
+class Controller_main extends Public_Controller {
+
 	public function __construct()
 	{
-		// Call parent first
-		parent::__construct();
-
-		// Load menu if not already done
-		$this->CI->load->model('menu');
+			parent::__construct();
 	}
 
 	/**
-	 * Page header
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see http://codeigniter.com/user_guide/general/urls.html
 	 */
-	public function header()
+	public function index()
 	{
-		// Get routed class name
-		$class = get_class($this->CI->routed);
-
-		// Add routed function name
-		$class .= ' '.$this->CI->router->fetch_method();
-
-		// Load header template
-		$this->CI->load->view('header', array('class' => $class));
-	}
-
-	/**
-	 * Page footer
-	 */
-	public function footer()
-	{
-		// Load footer template
-		$this->CI->load->view('footer');
+		$this->theme->addTheme('redrock')->setSection('Math');
+		//->addAsset('css/test.css')->addAsset('css/reset.css');
+		$this->theme->block('welcome_message')->render();
 	}
 	
-	public function myers() {
-		$this->CI->load->view('myers');
-		CI()->load->view('blog/cookies');
+	public function test() {
+		CI()->load->model('post_model');
+		echo CI()->post_model->say('hello world');
+		echo CI()->load->view('cookies');
 	}
 	
 }
 
-/* End of file template.php */
-/* Location: ./application/controllers/template.php */
+/* End of file welcome.php */
+/* Location: ./application/controllers/welcome.php */
