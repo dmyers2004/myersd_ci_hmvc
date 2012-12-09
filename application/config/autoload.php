@@ -78,7 +78,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'email', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('session','data','parser');
+$autoload['libraries'] = array('database','data','parser','settings');
 
 
 /*
@@ -94,7 +94,7 @@ $autoload['libraries'] = array('session','data','parser');
 |	$autoload['drivers'] = array('session', 'cache');
 */
 
-$autoload['drivers'] = array();
+$autoload['drivers'] = array('session');
 
 
 /*

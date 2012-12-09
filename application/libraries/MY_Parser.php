@@ -1,17 +1,16 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+require('MY_Parser/Parser_plugin.php');
+
 class MY_Parser extends CI_Parser {
-	protected $CI;
 	protected $config;
 	
 	public function __construct() {
-		$this->CI = get_instance();
+    CI()->load->config('parser',TRUE);
+		$this->config = CI()->config->item('parser');
 
-    $this->CI->load->config('parser',TRUE);
-		$this->config = $this->CI->config->item('parser');
-
-		/* make the default like Lex */
-		$this->set_delimiters($this->config['left tag'],$this->config['right tag']);
+		/* make the default ci parser like Lex */
+		$this->set_delimiters('{{','}}');
 	}
 
 	protected function _parse($template, $data, $return = FALSE)
@@ -23,16 +22,16 @@ class MY_Parser extends CI_Parser {
 		
 		$lex = new Lex\Parser();
 		$lex->scopeGlue($this->config['scope glue']);
-		$template = $lex->parse($template,$this->CI->load->_ci_cached_vars,array($this,'plugin_handler'),$this->config['allow php']);
+		$template = $lex->parse($template,CI()->load->_ci_cached_vars,array($this,'plugin_handler'),$this->config['allow php']);
 
 		if ($return === FALSE)
 		{
-			$this->CI->output->append_output($template);
+			CI()->output->append_output($template);
 		}
 		
 		if (is_string($return))
 		{
-    	$this->CI->load->_ci_cached_vars[$return] = $template;
+    	CI()->load->_ci_cached_vars[$return] = $template;
 		}
 
 		return $template;
@@ -69,7 +68,7 @@ class MY_Parser extends CI_Parser {
 			return APPPATH.$this->config['plugin folder'].'/'.$name.'.php';
 		}
 	
-		/* now try the module folders */
+		/* now try the module plugin folders */
 		$folders = glob(APPPATH.$this->config['module folder'].'/*');
 		foreach ($folders as $folder) {
 			if (file_exists($folder.'/'.$this->config['plugin folder'].'/'.$name.'.php')) {
@@ -79,21 +78,5 @@ class MY_Parser extends CI_Parser {
 		
 		return null;
 	}
-
 	
 } /* end MY_Parser */
-
-/* add on plugin parent class */
-class lex_plugin {
-	public $args;
-	public $content;
-	
-	public function __construct($content='',$args=array()) {
-		$this->args = $args;
-		$this->content = $content;
-	}
-	
-	public function get($name,$default=NULL) {
-		return (isset($this->args[$name])) ? $this->args[$name] : $default;
-	}
-}

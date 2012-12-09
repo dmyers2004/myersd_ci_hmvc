@@ -1,6 +1,6 @@
 <?php
 
-class theme_plugin extends lex_plugin {
+class theme_plugin extends Parser_plugin {
 
 	public function default_action() {
 		return '';

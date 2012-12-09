@@ -2,36 +2,30 @@
 
 /* oop wrapper for CI views _ci_cached_vars */
 /* to use my pages class and parser you must use this */
-class data {
-  protected $CI;
-
-  function __construct() {
-    $this->CI =& get_instance(); /* get instance of CI */
-  }
-
+class Data {
   /* get a global view variable */
   function __get($name) {
-    return $this->CI->load->_ci_cached_vars[$name];
+    return CI()->load->_ci_cached_vars[$name];
   }
 
   /* set a global view variable */
   function __set($name,$value) {
-    $this->CI->load->_ci_cached_vars[$name] = $value;
+    CI()->load->_ci_cached_vars[$name] = $value;
   }
 
   /* check if a global view variable is set */
   function __isset($name) {
-    return isset($this->CI->load->_ci_cached_vars[$name]);
+    return isset(CI()->load->_ci_cached_vars[$name]);
   }
 
   /* unset a global view variable */
   function __unset($name) {
-    unset($this->CI->load->_ci_cached_vars[$name]);
+    unset(CI()->load->_ci_cached_vars[$name]);
   }
   
   function data($name=null,$value=null) {
-  	if ($name == null) return $this->CI->load->_ci_cached_vars;
-    $this->CI->load->_ci_cached_vars[$name] = $value;  
+  	if ($name == null) return CI()->load->_ci_cached_vars;
+    $this->$name = $value;  
     return $this;
   }
 

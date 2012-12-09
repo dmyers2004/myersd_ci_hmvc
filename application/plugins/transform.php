@@ -1,6 +1,6 @@
 <?php
 
-class transform_plugin extends lex_plugin {
+class transform_plugin extends Parser_plugin {
 
 	public function default_action() {
 		return 'Default Replacement';

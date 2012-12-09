@@ -20,8 +20,11 @@ class theme extends ci_class {
     
     $this->updateData('js')->updateData('css')->updateData('meta')->updateData('extra');
 		
-		$this->data->body_id = $this->router->fetch_class().'_'.$this->router->fetch_method();
-		$this->data->body_class = $this->router->fetch_class().' '.$this->router->fetch_method();
+    $class = substr($this->router->fetch_class(),11);
+    $method = $this->router->fetch_method();
+		
+		$this->data->body_id = $class.'_'.$method;
+		$this->data->body_class = $class.' '.$method;
 
 		$this->title = $this->config['title'];		
 		$this->title_section = '';

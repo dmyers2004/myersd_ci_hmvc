@@ -34,3 +34,12 @@ class AJAX_Controller extends MY_Controller {
 			parent::__construct();
 	}
 }
+
+class Cli_Controller extends MY_Controller {
+	public function __construct()
+	{
+		parent::__construct();
+		if (!$this->input->is_cli_request())
+			show_404('Page Not Found');
+	}
+}

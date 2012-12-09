@@ -52,7 +52,7 @@ $options = array(
 );
 
 # You may specify a program banner thusly:
-$banner = c("Logs into the ultra-secure Sony Playstation Network servers.",'red');
+$banner = $colors->o("Logs into the ultra-secure Sony Playstation Network servers.",'red');
 Pharse::setBanner($banner);
 
 # After you've configured Pharse, run it like so:

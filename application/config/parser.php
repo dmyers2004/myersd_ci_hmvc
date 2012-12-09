@@ -1,9 +1,5 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-/* ci */
-$config['left tag'] = '{{';
-$config['right tag'] = '}}';
-
 /* lex */
 $config['scope glue'] = '.';
 $config['allow php'] = false;

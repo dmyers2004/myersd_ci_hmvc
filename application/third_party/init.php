@@ -40,6 +40,6 @@ function &CI() {
 $modules = glob(APPPATH.'modules/*');
 foreach ($modules as $m) @include($m.'/config/autoload.php');
 
-/* load the controller class and the controller extentions */
+/* load the controller class and the controller extensions */
 include(BASEPATH.'core/Controller.php');
 include(APPPATH.'core/MY_Controller.php');
