@@ -1,16 +1,12 @@
 {
   "require": {
-    "mikey179/vfsStream": "*",
     "pyrocms/lex": "2.2.*",
-    "php": ">=5.3.0",
-		"illuminate/database": "1.2.x-dev"
+    "php": ">=5.3.0"
   },
   "require-dev": {
-    "EHER/PHPUnit": "*"
   },
   "autoload": {
     "psr-0": {
-      "Illuminate\\Database": "src/"
     }
   },
   "extra": {

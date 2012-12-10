@@ -8,28 +8,7 @@ called by /application/config/autoload.php
 
 /* PHP Composer autoloader */
 require(APPPATH.'../vendor/autoload.php');
-
-/*
-base class wrapper to make $this work in libs and stuff
-*/
-class ci_class {
-	public $CI;
-	
-	public function __construct() {
-		$this->CI = get_instance();
-	}
-
-  public function __call($name, $arguments) {
-	  return call_user_func_array(array($this->CI, $name), $arguments);
-  }
-  
-  public function __get($name) {
-    if (isset($this->CI->$name)) return $this->CI->$name;
-
-    return NULL;
-  }
-
-} /* end class */
+require('ci_class.php');
 
 /* create a wrapper function for CI super object */
 function &CI() {
@@ -40,6 +19,9 @@ function &CI() {
 $modules = glob(APPPATH.'modules/*');
 foreach ($modules as $m) @include($m.'/config/autoload.php');
 
-/* load the controller class and the controller extensions */
+/*
+load the controller class and the controller extensions
+not sure why the MY Controller with multi extended controller classes doesn't work any more? CI 3.0?
+*/
 include(BASEPATH.'core/Controller.php');
 include(APPPATH.'core/MY_Controller.php');

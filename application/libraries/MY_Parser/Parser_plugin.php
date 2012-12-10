@@ -1,10 +1,11 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Parser_plugin {
+class Parser_plugin extends ci_class {
 	public $args;
 	public $content;
 	
 	public function __construct($content='',$args=array()) {
+		parent::__construct();
 		$this->args = $args;
 		$this->content = $content;
 	}

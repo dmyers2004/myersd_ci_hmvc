@@ -80,7 +80,6 @@ class theme extends ci_class {
   	return $this;
   }
 
-  
   public function getImage($path) {
   	return findAsset($path);
   }

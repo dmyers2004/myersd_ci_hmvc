@@ -28,5 +28,4 @@ class Data {
     $this->$name = $value;  
     return $this;
   }
-
 } /* end class */

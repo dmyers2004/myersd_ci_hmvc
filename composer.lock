@@ -1,216 +1,6 @@
 {
-    "hash": "a0acee20e997d75823f05dbe99538419",
+    "hash": "3d53e57318bca475b92a0cc3764069d3",
     "packages": [
-        {
-            "name": "illuminate/container",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/illuminate/container",
-                "reference": "373d1882250f2529627217ac26e0292df6053201"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/illuminate/container/archive/373d1882250f2529627217ac26e0292df6053201.zip",
-                "reference": "373d1882250f2529627217ac26e0292df6053201",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "time": "2012-12-07 22:24:36",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "installation-source": "source",
-            "autoload": {
-                "classmap": [
-                    "src/"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "A powerful IoC container for PHP."
-        },
-        {
-            "name": "illuminate/database",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/illuminate/database",
-                "reference": "2722981d3a6607c6794b9655898314102ba86160"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/illuminate/database/archive/2722981d3a6607c6794b9655898314102ba86160.zip",
-                "reference": "2722981d3a6607c6794b9655898314102ba86160",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "illuminate/events": "1.2.*",
-                "illuminate/support": "1.2.*"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.7.2",
-                "illuminate/console": "1.2.*",
-                "illuminate/filesystem": "1.2.*",
-                "illuminate/pagination": "1.2.*",
-                "illuminate/support": "1.2.*"
-            },
-            "suggest": {
-                "illuminate/events": "Allows for catching of database query events."
-            },
-            "time": "2012-12-08 03:32:02",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "Illuminate\\Database": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "An elegant database abstraction library.",
-            "keywords": [
-                "laravel"
-            ]
-        },
-        {
-            "name": "illuminate/events",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/illuminate/events",
-                "reference": "4f0a51cf84885557aa7598eef892ffe9e4d48b9c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/illuminate/events/archive/4f0a51cf84885557aa7598eef892ffe9e4d48b9c.zip",
-                "reference": "4f0a51cf84885557aa7598eef892ffe9e4d48b9c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0",
-                "illuminate/container": "1.2.*",
-                "illuminate/support": "1.2.*"
-            },
-            "require-dev": {
-                "mockery/mockery": "0.7.2"
-            },
-            "time": "2012-12-07 22:25:48",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "Illuminate\\Events": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "A simple, powerful events system."
-        },
-        {
-            "name": "illuminate/support",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "http://github.com/illuminate/support",
-                "reference": "17965ba4e3d869cda3d307ffcae0a5b282926f21"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/illuminate/support/archive/17965ba4e3d869cda3d307ffcae0a5b282926f21.zip",
-                "reference": "17965ba4e3d869cda3d307ffcae0a5b282926f21",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "time": "2012-12-07 22:28:58",
-            "type": "library",
-            "extra": {
-                "branch-alias": {
-                    "dev-master": "1.2-dev"
-                }
-            },
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "Illuminate\\Support": "src/"
-                },
-                "files": [
-                    "src/helpers.php"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "authors": [
-                {
-                    "name": "Taylor Otwell",
-                    "email": "taylorotwell@gmail.com"
-                }
-            ],
-            "description": "Various utilities and support functions."
-        },
-        {
-            "name": "mikey179/vfsStream",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/mikey179/vfsStream",
-                "reference": "37be730132894b97838b7b7e0d4d2a04e9f2b266"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/mikey179/vfsStream/archive/37be730132894b97838b7b7e0d4d2a04e9f2b266.zip",
-                "reference": "37be730132894b97838b7b7e0d4d2a04e9f2b266",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "time": "2012-11-06 18:52:16",
-            "type": "library",
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "org\\bovigo\\vfs\\": "src/main/php"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "BSD"
-            ],
-            "homepage": "http://vfs.bovigo.org/"
-        },
         {
             "name": "pyrocms/lex",
             "version": "2.2.0",
@@ -258,6 +48,54 @@
                 "template",
                 "parser"
             ]
+        },
+        {
+            "name": "symfony/finder",
+            "version": "v2.0.16",
+            "target-dir": "Symfony/Component/Finder",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/Finder",
+                "reference": "v2.0.16"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/symfony/Finder/zipball/v2.0.16",
+                "reference": "v2.0.16",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "time": "2012-07-02 00:05:19",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "2.1-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "Symfony\\Component\\Finder": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "http://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony Finder Component",
+            "homepage": "http://symfony.com"
         }
     ],
     "packages-dev": null,
@@ -265,7 +103,7 @@
 
     ],
     "minimum-stability": "dev",
-    "stability-flags": {
-        "illuminate/database": 20
-    }
+    "stability-flags": [
+
+    ]
 }

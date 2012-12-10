@@ -3,12 +3,8 @@
 require('MY_Parser/Parser_plugin.php');
 
 class MY_Parser extends CI_Parser {
-	protected $config;
-	
-	public function __construct() {
-    CI()->load->config('parser',TRUE);
-		$this->config = CI()->config->item('parser');
 
+	public function __construct() {
 		/* make the default ci parser like Lex */
 		$this->set_delimiters('{{','}}');
 	}
@@ -20,49 +16,49 @@ class MY_Parser extends CI_Parser {
 			return FALSE;
 		}
 		
+		$data = array_merge($this->CI->load->_ci_cached_vars,$data);
+		
 		$lex = new Lex\Parser();
 		$lex->scopeGlue($this->config['scope glue']);
-		$template = $lex->parse($template,CI()->load->_ci_cached_vars,array($this,'plugin_handler'),$this->config['allow php']);
+		$template = $lex->parse($template,$data,array($this,'plugin_handler'),$this->config['allow php']);
 
 		if ($return === FALSE)
 		{
-			CI()->output->append_output($template);
+			$this->CI->output->append_output($template);
 		}
 		
-		if (is_string($return))
-		{
-    	CI()->load->_ci_cached_vars[$return] = $template;
-		}
-
 		return $template;
 	}
 	
+	/* new */
 	public function plugin_handler($name, $attributes, $content) {
-		$segs = explode($this->config['scope glue'],$name);
+		if (strpos($name,$this->config['scope glue']) !== false) {
+			$segs = explode($this->config['scope glue'],$name);
+		} else {
+			$segs[0] = $name;
+		}
+
 		$class = $segs[0];
 		$method = isset($segs[1]) ? $segs[1] : 'default';
 		$method .= '_action';
+		$reply = '';
 		
-		$plugin_file = $this->locator($class);
-		if ($plugin_file) {
+		$plugin_file = $this->plugin_locator($class);
+		
+		if (file_exists($plugin_file)) {
 			include_once($plugin_file);
-			$plugin_name = $class.'_plugin';
-			$plugin = new $plugin_name($content,$attributes);
+			$plugin = new $class($content,$attributes);
 			if (method_exists($plugin, $method)) {
-				return call_user_func(array($plugin,$method));
+				$reply = call_user_func(array($plugin,$method));
 			}
-		}
-		
-		/* debug on return something useful */
-		if ($this->config['debug']) {
-			return '['.$name.']['.print_r($attributes,true).']['.$content.']';
+		} elseif ($this->config['debug']) {
+			$reply = 'Plugin Not Found '.$class.' '.$method;;
 		}
 	
-		/* not found and debugging off */
-		return '';
+		return $reply;
 	}
 
-	private function locator($name) {
+	private function plugin_locator($name) {
 		/* first try the system plugin folder */
 		if (file_exists(APPPATH.$this->config['plugin folder'].'/'.$name.'.php')) {
 			return APPPATH.$this->config['plugin folder'].'/'.$name.'.php';
