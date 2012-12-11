@@ -2,24 +2,19 @@
 
 class theme extends ci_class {
 	public $assets = array('css'=>'','js'=>'','meta'=>'','extra'=>'');	
-  public $config = array();
   public $cache = array();
   public $search = array();
 
   public function __construct($config = array()) {
-    $this->CI = &get_instance();
-
-    $this->CI->load->config('theme',TRUE);
-		$this->config = array_merge($this->CI->config->item('theme'),$config);
+		parent::__construct();
+    $this->load_config('theme');
 
     /* run the autoloaders */
-    foreach ($this->config['autoload']['css'] as $file) $this->addAsset($file,false);
-    foreach ($this->config['autoload']['js'] as $file) $this->addAsset($file,false);
-    foreach ($this->config['autoload']['meta'] as $key => $value) $this->addMeta($key,$value,false);
-    foreach ($this->config['autoload']['extra'] as $content) $this->addExtra($content,false);
-    
-    $this->updateData('js')->updateData('css')->updateData('meta')->updateData('extra');
-		
+    foreach ($this->config['autoload']['css'] as $file) $this->addCss($file);
+    foreach ($this->config['autoload']['js'] as $file) $this->addJs($file);
+    foreach ($this->config['autoload']['meta'] as $key => $value) $this->addMeta($key,$value);
+    foreach ($this->config['autoload']['extra'] as $content) $this->addExtra($content);
+    		
     $class = substr($this->router->fetch_class(),11);
     $method = $this->router->fetch_method();
 		
@@ -40,55 +35,69 @@ class theme extends ci_class {
 		$this->title_section = $name;
 	}
 
-  public function addAsset($path,$update = true) {
-  	$md5 = md5($path);
-		if (isset($this->cache[$md5])) return $this;
-		
-		$ext = substr($path,-3);
- 		$file = $this->findAsset($path);
-
-		if ($ext == '.js') {
-	 		if ($file != null) {
-			  $this->assets['js'][$md5] = '<script src="'.$file.'"></script>';
-	 		} elseif ($this->config['debug']) {
-			  $this->assets['js'][$md5] = '<!-- Script Not Found '.$path.' -->';
-	 		}
-	 		if ($update) $this->updateData('js');
-		} elseif ($ext == 'css') {
+	public function addCss($name,$media='screen') {
+  	$md5 = md5($name);
+	
+		if (!$this->assets['css'][$md5]) { 
+	 		$file = $this->findAsset($name);
+	
 	    if ($file != null) {
-		    $this->assets['css'][$md5] = '<link href="'.$file.'" media="'.(($content) ? $content : 'screen').'" rel="stylesheet" type="text/css" />';
+		    $this->assets['css'][$md5] = '<link href="'.$file.'" media="'.$media.'" rel="stylesheet" type="text/css" />';
 	 		} elseif ($this->config['debug']) {
-	    	$this->assets['css'][$md5] = '<!-- Link Not Found '.$path.' -->';
+	    	$this->assets['css'][$md5] = '<!-- Link Not Found '.$name.' -->';
 	    }
-	 		if ($update) $this->updateData('css');
 		}
 
   	return $this;
-  }
+	}
+	
+	public function addJs($name) {
+  	$md5 = md5($name);
+  	
+		if (!$this->assets['js'][$md5]) { 
+	 		$file = $this->findAsset($name);
+	
+	 		if ($file != null) {
+			  $this->assets['js'][$md5] = '<script src="'.$file.'"></script>';
+	 		} elseif ($this->config['debug']) {
+			  $this->assets['js'][$md5] = '<!-- Script Not Found '.$name.' -->';
+	 		}
+		}
 
-	public function addExtra($content,$update = true) {
-		$this->assets['extra'][md5($content)] = $content;
- 		if ($update) $this->updateData('extra');
- 		
+  	return $this;
+	}
+
+	public function addExtra($content) {
+		$this->assets['extra'][md5($content)] = $content; 		
  		return $this;
 	}
 
-  public function addMeta($key,$content,$update = true) {
-  	$this->assets['meta'][$key] = '<meta name="'.$key.'" content="'.$content.'"/>';
-	 	if ($update) $this->updateData('meta');
-
+  public function addMeta($key,$content) {
+  	$this->assets['meta'][md5($key)] = '<meta name="'.$key.'" content="'.$content.'"/>';
   	return $this;
   }
 
   public function getImage($path) {
   	return findAsset($path);
   }
-
-	public function updateData($which) {
-		$this->CI->load->vars(array('asset_'.$which=>trim(implode(chr(10),@(array)$this->assets[$which])).chr(10)));
-		return $this;
+	
+	/* !todo add sep functions */
+	public function removeCss($name) {
+		
 	}
-
+	
+	public function removeJs($name) {
+	
+	}
+	
+	public function removeMeta($name) {
+	
+	}
+	
+	public function removeExtra($name) {
+	
+	}
+	
 	public function removeAsset($path) {
 		$md5 = md5($path);
 		unset($this->cache[$md5]);
@@ -119,7 +128,7 @@ class theme extends ci_class {
 	}
 
 	public function addTheme($name) {
-		$this->search = array(md5($name)=>$name) + $this->search;
+		$this->search += array(md5($name)=>$name);
 		
 		$theme = dirname(APPPATH).'/'.$this->config['theme folder'].'/'.$name.'/';
 		$this->CI->load->add_package_path($theme);
@@ -135,8 +144,17 @@ class theme extends ci_class {
 	public function findAsset($file) {
 		/* external link / direct link */
     if (substr($file,0,4) == 'http' || substr($file,0,1) == '/') return $file;
+		
+		foreach ($this->search as $folder) {
+			$path = FCPATH.$this->config['theme folder'].'/'.$folder.'/';
+			$themes = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(FCPATH.$this->config['theme folder']));
+			foreach ($themes as $key => $name) {
+				$cache[substr($key,strlen($path))] = substr($name,strlen(FCPATH.$this->config['theme folder'].'/'));
+			}
+		}
+		
+		print_r($cache);
 
-		/* needs cache! */
 		foreach ($this->search as $folder)
 			if (file_exists(FCPATH.$this->config['theme folder'].'/'.$folder.'/'.$file))
 				return '/'.$this->config['theme folder'].'/'.$folder.'/'.$file;
@@ -162,6 +180,26 @@ class theme extends ci_class {
 		/* 1column, 2column-right, 2column-left, 3column */
 		$this->parser->parse('theme/'.$template,$this->load->_ci_cached_vars);
 		return $this;
+	}
+
+	public function get_wrapper($which) {
+    return trim(implode(chr(10),@(array)$this->assets[$which])).chr(10);	
+	}
+
+	public function getJs() {
+    return $this->get_wrapper('js');	
+	}
+
+	public function getMeta() {
+    return $this->get_wrapper('meta');	
+	}
+
+	public function getExtra() {
+    return $this->get_wrapper('extra');	
+	}
+
+	public function getCss() {
+    return $this->get_wrapper('css');	
 	}
 
 } /* end class */
