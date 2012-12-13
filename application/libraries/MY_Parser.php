@@ -3,10 +3,41 @@
 require('MY_Parser/Parser_plugin.php');
 
 class MY_Parser extends CI_Parser {
+	public $config;
+	public $CI;
+	public $cache;
 
 	public function __construct() {
+		$this->CI = get_instance();
+		
 		/* make the default ci parser like Lex */
+		//$this->CI->load->config('parser',TRUE);
+		//$this->config = $this->CI->config->item('parser');
+		$this->config = $this->CI->settings->get_settings_by_group('parser');
+		
 		$this->set_delimiters('{{','}}');
+		
+		/* load cache */
+		$this->cache = $this->CI->cache->get('plugins');
+				
+		if (!$this->cache) {
+			/* system plugins */
+			$path = glob(APPPATH.$this->config['plugin folder'].'/*.php');
+			foreach ($path as $name) {
+				$this->cache[substr(basename($name),0,-11)] = substr($name,strlen(APPPATH)-1);
+			}
+			
+			/* module plugins */
+			$paths = glob(APPPATH.$this->config['module folder'].'/*');
+			foreach ($paths as $module) {
+				$plugins = glob($module.'/'.$this->config['plugin folder'].'/*');
+				foreach ($plugins as $plugin) {
+					$this->cache[substr(basename($plugin),0,-11)] = substr($plugin,strlen(APPPATH)-1);
+				}
+			}
+			$this->CI->cache->save('plugins',$this->cache,300);
+		}
+		
 	}
 
 	protected function _parse($template, $data, $return = FALSE)
@@ -38,41 +69,32 @@ class MY_Parser extends CI_Parser {
 			$segs[0] = $name;
 		}
 
-		$class = $segs[0];
-		$method = isset($segs[1]) ? $segs[1] : 'default';
-		$method .= '_action';
+		$class = strtolower(array_shift($segs));
+		$method = isset($segs[0]) ? implode('_',$segs).'_action' : 'default_action';
 		$reply = '';
-		
-		$plugin_file = $this->plugin_locator($class);
-		
+
+		/* cache this */
+		if (isset($this->cache[$class])) {
+			$plugin_file = APPPATH.$this->cache[$class];
+		} else {
+			$plugin_file = '###';
+		}
+
+		$class .= '_plugin';
+
 		if (file_exists($plugin_file)) {
 			include_once($plugin_file);
 			$plugin = new $class($content,$attributes);
 			if (method_exists($plugin, $method)) {
 				$reply = call_user_func(array($plugin,$method));
+			} elseif ($this->config['debug']) {
+				$reply = 'Plugin Method Not Found '.$class.' '.$method;;
 			}
 		} elseif ($this->config['debug']) {
-			$reply = 'Plugin Not Found '.$class.' '.$method;;
+			$reply = 'Plugin Not Found '.$class;
 		}
-	
-		return $reply;
-	}
 
-	private function plugin_locator($name) {
-		/* first try the system plugin folder */
-		if (file_exists(APPPATH.$this->config['plugin folder'].'/'.$name.'.php')) {
-			return APPPATH.$this->config['plugin folder'].'/'.$name.'.php';
-		}
-	
-		/* now try the module plugin folders */
-		$folders = glob(APPPATH.$this->config['module folder'].'/*');
-		foreach ($folders as $folder) {
-			if (file_exists($folder.'/'.$this->config['plugin folder'].'/'.$name.'.php')) {
-				return $folder.'/'.$this->config['plugin folder'].'/'.$name.'.php';
-			}
-		}
-		
-		return null;
+		return $reply;
 	}
 	
 } /* end MY_Parser */

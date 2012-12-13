@@ -64,7 +64,7 @@ class Controller_template extends Public_Controller {
 	
 	public function myers() {
 		$this->CI->load->view('myers');
-		CI()->load->view('blog/cookies');
+		$this->load->view('blog/cookies');
 	}
 	
 }

@@ -10,11 +10,6 @@ called by /application/config/autoload.php
 require(APPPATH.'../vendor/autoload.php');
 require('ci_class.php');
 
-/* create a wrapper function for CI super object */
-function &CI() {
-	return get_instance();
-}
-
 /* Include any CI 3.0 Modules autoload.php files */
 $modules = glob(APPPATH.'modules/*');
 foreach ($modules as $m) @include($m.'/config/autoload.php');
@@ -25,3 +20,4 @@ not sure why the MY Controller with multi extended controller classes doesn't wo
 */
 include(BASEPATH.'core/Controller.php');
 include(APPPATH.'core/MY_Controller.php');
+

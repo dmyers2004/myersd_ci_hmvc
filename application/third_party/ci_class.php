@@ -11,11 +11,8 @@ class ci_class {
 		$this->CI = get_instance();
 	}
 
-	public function load_config($which=null) {
-		if ($which != null) {
-			$this->CI->load->config($which,TRUE);
-			$this->config = $this->CI->config->item($which);
-		}
+	public function load_config($config='') {
+		$this->config = $this->CI->settings->get_settings_by_group($config);
 	}
 
   public function __call($name, $arguments) {

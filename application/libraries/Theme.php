@@ -4,6 +4,8 @@ class theme extends ci_class {
 	public $assets = array('css'=>'','js'=>'','meta'=>'','extra'=>'');	
   public $cache = array();
   public $search = array();
+  public $body_id = '';
+  public $body_class = '';
 
   public function __construct($config = array()) {
 		parent::__construct();
@@ -18,8 +20,8 @@ class theme extends ci_class {
     $class = substr($this->router->fetch_class(),11);
     $method = $this->router->fetch_method();
 		
-		$this->data->body_id = $class.'_'.$method;
-		$this->data->body_class = $class.' '.$method;
+		$this->body_id = $class.'_'.$method;
+		$this->body_class = $class.' '.$method;
 
 		$this->title = $this->config['title'];		
 		$this->title_section = '';
@@ -29,6 +31,19 @@ class theme extends ci_class {
 
 		/* add the default as the "base" */
 		$this->addDefault($this->config['default theme']);
+		
+		/* load cache */
+		$this->cache = $this->CI->cache->get('theme_assets');
+				
+		if (!$this->cache) {
+			$path = FCPATH.$this->config['theme folder'];
+			$themes = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
+			foreach ($themes as $key => $name)
+				if (substr(basename($name),0,1) != '.')
+					$this->cache[substr($key,strpos($key,'/',strlen($path)+1)+1)] = substr($name,strlen(FCPATH)-1);
+			$this->CI->cache->save('theme_assets',$this->cache,300);
+		}
+		
   }
 
 	public function setSection($name) {
@@ -141,33 +156,13 @@ class theme extends ci_class {
 		return $this;
 	}
 
-	public function findAsset($file) {
+	public function findAsset($file,$min) {
 		/* external link / direct link */
     if (substr($file,0,4) == 'http' || substr($file,0,1) == '/') return $file;
 		
-		foreach ($this->search as $folder) {
-			$path = FCPATH.$this->config['theme folder'].'/'.$folder.'/';
-			$themes = new RecursiveIteratorIterator(new RecursiveDirectoryIterator(FCPATH.$this->config['theme folder']));
-			foreach ($themes as $key => $name) {
-				$cache[substr($key,strlen($path))] = substr($name,strlen(FCPATH.$this->config['theme folder'].'/'));
-			}
-		}
+		if (array_key_exists($file,$this->cache)) return $this->cache[$file];
+		if (array_key_exists($min,$this->cache) && $this->config['use min']) return $this->cache[$min];
 		
-		print_r($cache);
-
-		foreach ($this->search as $folder)
-			if (file_exists(FCPATH.$this->config['theme folder'].'/'.$folder.'/'.$file))
-				return '/'.$this->config['theme folder'].'/'.$folder.'/'.$file;
-
-/*
-		$modules = glob(FCPATH.$this->config['module folder'].'/*');
-		foreach ($modules as $folder) {
-			if (file_exists($folder.'/'.$file)) {
-				return '/'.str_replace(FCPATH,'',$folder.'/'.$file);
-			}
-		}
-*/
-
 		return null;
 	}
 	

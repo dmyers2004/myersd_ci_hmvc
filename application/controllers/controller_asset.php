@@ -6,11 +6,11 @@ class Controller_Asset extends Public_Controller {
 
 		$this->theme->addTheme('redrock');
 		
-		$this->theme->addAsset('bootstrap/css/bootstrap.css');
-		$this->theme->addAsset('bootstrap/css/min-bootstrap.css');
-		$this->theme->addAsset('css/test.css');
-		$this->theme->addAsset('jquery.bootstrap.growl.js');
-		$this->theme->addAsset('author','Don Myers');
+		$this->theme->addCss('bootstrap/css/bootstrap.css');
+		$this->theme->addCss('bootstrap/css/min-bootstrap.css');
+		$this->theme->addCss('css/test.css');
+		$this->theme->addJs('jquery.bootstrap.growl.js');
+		$this->theme->addJs('author','Don Myers');
 
 		$this->parser->parse('example');
 	}

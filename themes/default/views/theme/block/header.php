@@ -2,22 +2,21 @@
 <html lang="en">
 	<head>
 		<meta charset="utf-8">
-		{{ asset_meta }}
-
+		{{ theme.meta }}
 		<title>{{ theme.title }}</title>
-
-		{{ theme.add name="css/reset.css" complete="true" }}
-		{{ theme.add name="bootstrap/css/bootstrap.css" complete="true" }}
-		{{ theme.add name="blueprint/grid.css" complete="true" }}
-		{{ theme.add name="css/application.css" complete="true" }}
-		{{ asset_css }}
-
-		{{ theme.add name="jquery/jquery.1.8.2.js" complete="true" }}
-		{{ theme.add name="bootstrap/js/bootstrap.js" complete="true" }}
-		{{ theme.add name="js/application.js" complete="true" }}
-
-		{{ asset_js }}
-		{{ asset_extra }}
+		{{ theme.getcss file="css/reset.css" }}
+		{{ theme.getcss file="bootstrap/css/bootstrap.css" }}
+		{{ theme.getcss file="blueprint/grid.css" }}
+		{{ theme.getcss file="css/application.css" }}
+		{{ theme.css }}
+		{{ theme.getjs file="jquery/jquery-1.7.2.min.js" }}
+		{{ theme.getjs file="bootstrap/js/bootstrap.js" }}
+		{{ theme.getjs file="js/application.js" }}
+		{{ theme.js }}
+		{{ theme.extra }}
 	</head>
-	<body id="{{ body_id }}" class="{{ body_class }}">
+	<body id="{{ theme.body.id }}" class="{{ theme.body.class }}">
 		<div class="container">
+		{{ settings.get name="scope glue" group="parser" }}
+		{{ settings.get name="email" }}
+		{{ settings.get name="theme folder" group="theme" }}

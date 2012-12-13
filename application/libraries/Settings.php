@@ -31,15 +31,8 @@ class Settings
 	 * @access 	private
 	 * @var 	array
 	 */
-	private $settings = array();
+	public $settings = array();
 
-	/**
-	 * Settings group array
-	 *
-	 * @access 	private
-	 * @var 	array
-	 */
-	private $settings_group = array();
 
 	// ------------------------------------------------------------------------
 
@@ -76,21 +69,16 @@ class Settings
 			return FALSE;
 		}
 
-		$this->_ci->db->select('option_name,option_value')
-					->from('settings')
-					->where('auto_load', 'yes');
-
-		$query = $this->_ci->db->get();
+		/* load and cache them all */
+		$query = $this->_ci->db->select('option_group,option_name,option_value')->from('settings')->order_by('option_group')->where('option_active',1)->get();;
 
 		if ($query->num_rows() == 0)
 		{
 			return FALSE;
 		}
 
-		foreach ($query->result() as $k => $row)
-		{
-			$this->settings[$row->option_name] = $row->option_value;
-			$this->_ci->config->set_item($row->option_name, $row->option_value);
+		foreach ($query->result() as $row) {
+			$this->settings[$row->option_group][$row->option_name] = $row->option_value;
 		}
 
 		return $this->settings;
@@ -114,38 +102,35 @@ class Settings
 	 * @param	string
 	 * @return	mixed
 	 */
-	public function get_setting($option_name)
+	public function get_setting($option_name = '',$option_group = NULL)
 	{
 		if ( ! $option_name)
 		{
 			return FALSE;
 		}
-
-		// First check the auto loaded settings
-		if (isset($this->settings[$option_name]))
-		{
-			return $this->settings[$option_name];
+		
+		$ary = $this->settings;
+		if ($option_group) {
+			if (isset($this->settings[$option_group])) {
+				$ary = $this->settings[$option_group];
+			}
 		}
 
-		// Now lets try the settings table
-		$this->_ci->db->select('option_value')
-						->from('settings')
-						->where('option_name', $option_name);
-
-		$query = $this->_ci->db->get();
-
-		if ($query->num_rows() > 0)
+		// First check the auto loaded settings
+		if (isset($ary[$option_name]))
 		{
-			$row = $query->row();
-			// Add it to the main settings array
-			$this->settings[$option_name] = $row->option_value;
-
-			return $row->option_value;
+			return $ary[$option_name];
 		}
 
 		// Still nothing. How about config?
-		// This will retun FALSE if not found.
-		return $this->_ci->config->item($option_name);
+		// This will return FALSE if not found.
+		if ($option_group) {
+			$value = $this->_ci->config->item($option_name,$option_group);	
+		} else {
+			$value = $this->_ci->config->item($option_name);	
+		}
+
+		return $value;
 	}
 
 	// ------------------------------------------------------------------------
@@ -158,31 +143,20 @@ class Settings
 	 * @param	string
 	 * @return	object
 	 */
-	public function get_settings_by_group($option_group = '')
-	{
-		if ( ! $option_group)
-		{
+	public function get_settings_by_group($option_group = '',$override=array()) {
+		if (!$option_group) {
 			return FALSE;
 		}
 
-		$this->_ci->db->select('option_name,option_value')
-						->from('settings')
-						->where('option_group', $option_group);
-
-		$query = $this->_ci->db->get();
-
-		if ($query->num_rows() == 0)
-		{
-			return FALSE;
+		$final_config = array();
+		
+		if ($option_group != null) {
+			$this->_ci->load->config($option_group,TRUE);
+			
+			$settings = (is_array(@$this->settings[$option_group])) ? $this->settings[$option_group] : array();
+			$final_config = array_merge($this->_ci->config->item($option_group),$settings,$override);
 		}
-
-		foreach ($query->result() as $k => $row)
-		{
-			$this->settings[$row->option_name] = $row->option_value;
-			$arr[$row->option_name] = $row->option_value;
-		}
-
-		return $arr;
+		return $final_config;	
 	}
 
 	// ------------------------------------------------------------------------
@@ -198,6 +172,8 @@ class Settings
 	{
 		$this->_ci->db->where('option_name', $option_name);
 		$this->_ci->db->update('settings', array('option_value' => $option_value));
+
+		$this->settings[$option_name] = $option_value;
 
 		if ($this->_ci->db->affected_rows() == 0)
 		{
@@ -218,6 +194,8 @@ class Settings
 	public function delete_settings_by_group($option_group)
 	{
 		$this->_ci->db->delete('settings', array('option_group' => $option_group));
+
+		$this->settings[$option_group] = NULL;
 
 		if ($this->_ci->db->affected_rows() == 0)
 		{
@@ -240,12 +218,13 @@ class Settings
 	 * @param	string $auto_load
 	 * @return	bool
 	 */
-	public function add_setting($option_name, $option_value = '', $option_group = 'addon', $auto_load = 'no')
+	public function add_setting($option_name, $option_value = '', $option_group = 'config', $option_active = 1)
 	{
 		// Check and make sure it isn't already added.
 		$this->_ci->db->select('option_value')
 					->from('settings')
-					->where('option_name', $option_name);
+					->where('option_name', $option_name)
+					->where('option_group', $option_group);
 
 		$query = $this->_ci->db->get();
 
@@ -259,10 +238,44 @@ class Settings
 			'option_name' => $option_name,
 			'option_value' => $option_value,
 			'option_group' => $option_group,
-			'auto_load' => $auto_load,
+			'option_active' => $option_active
 		);
 
 		$this->_ci->db->insert('settings', $data);
+		
+		$this->get_settings();
+
+		if ($this->_ci->db->affected_rows() == 0)
+		{
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+
+	public function disable_settings_by_group($option_group = '')
+	{
+		if (!$option_group) {
+			return FALSE;
+		}
+		$this->db->where('option_group', $option_group);
+		$this->db->update('settings', array('option_active'=>0));
+
+		if ($this->_ci->db->affected_rows() == 0)
+		{
+			return FALSE;
+		}
+
+		return TRUE;
+	}
+	
+	public function enable_settings_by_group($option_group = ''	)
+	{
+		if (!$option_group) {
+			return FALSE;
+		}
+		$this->db->where('option_group', $option_group);
+		$this->db->update('settings', array('option_active'=>1));
 
 		if ($this->_ci->db->affected_rows() == 0)
 		{
@@ -284,6 +297,8 @@ class Settings
 	{
 		$this->_ci->db->delete('settings', array('option_name' => $option_name));
 
+		$this->settings[$option_name];
+	
 		if ($this->_ci->db->affected_rows() == 0)
 		{
 			return FALSE;

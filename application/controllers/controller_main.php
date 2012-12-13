@@ -51,14 +51,14 @@ class Controller_main extends Public_Controller {
 	public function index()
 	{
 		$this->theme->addTheme('redrock')->setSection('Math');
-		//->addAsset('css/test.css')->addAsset('css/reset.css');
+		//->addCss('css/test.css')->addCss('css/reset.css');
 		$this->theme->block('welcome_message')->render();
 	}
 	
 	public function test() {
-		CI()->load->model('post_model');
-		echo CI()->post_model->say('hello world');
-		echo CI()->load->view('cookies');
+		$this->load->model('post_model');
+		echo $this->post_model->say('hello world');
+		echo $this->load->view('cookies');
 	}
 	
 }

@@ -6,6 +6,7 @@ class Parser_plugin extends ci_class {
 	
 	public function __construct($content='',$args=array()) {
 		parent::__construct();
+
 		$this->args = $args;
 		$this->content = $content;
 	}

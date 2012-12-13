@@ -4,7 +4,9 @@ class Auth extends ci_class {
   /* try to load and attach the profile if it's valid */
   public function __construct()
   {
-    CI()->profile = new stdClass();
+    parent::__construct();
+    
+    $this->CI->profile = new stdClass();
 
     $this->config->load('auth', TRUE);
 
@@ -16,7 +18,7 @@ class Auth extends ci_class {
     $temp_profile = $this->session->userdata('profile');
 
     if ($this->m_user->validate_profile($temp_profile)) {
-      CI()->profile = $temp_profile;
+      $this->CI->profile = $temp_profile;
     }
   }
 
@@ -32,11 +34,11 @@ class Auth extends ci_class {
   public function set_profile($profile)
   {
     if (!$this->m_user->validate_profile($profile)) {
-      CI()->profile = new stdClass();
-      $this->session->set_userdata('profile',CI()->profile);
+      $this->CI->profile = new stdClass();
+      $this->session->set_userdata('profile',$this->CI->profile);
       $set = FALSE;
     } else {
-      CI()->profile = $profile;
+      $this->CI->profile = $profile;
       $this->session->set_userdata('profile',$profile);
       $set = TRUE;
     }
@@ -58,7 +60,7 @@ class Auth extends ci_class {
   /* dump the profile and session always returns true */
   public function logout()
   {
-    CI()->profile = NULL;
+    $this->CI->profile = NULL;
     $this->session->sess_destroy();
 
     return TRUE;
@@ -72,7 +74,7 @@ class Auth extends ci_class {
   {
     if (empty($role)) return FALSE;
 
-    $profile = ($customprofile) ? $customprofile : CI()->profile;
+    $profile = ($customprofile) ? $customprofile : $this->CI->profile;
     if (!$this->m_user->validate_profile($profile)) return FALSE;
 
     /* string, string|string (or), string&string (and) */

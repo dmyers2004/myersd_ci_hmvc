@@ -2,9 +2,3 @@
 
 /* add this package */
 $autoload['packages'][] = dirname(dirname(__FILE__)).'/';
-
-$autoload['libraries'][] = 'application';
-
-$autoload['helpers'][] = 'application';
-
-$autoload['config'][] = 'application';
