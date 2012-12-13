@@ -8,16 +8,10 @@ called by /application/config/autoload.php
 
 /* PHP Composer autoloader */
 require(APPPATH.'../vendor/autoload.php');
+
+/* base class for all my classes - makes calling $this->something easier */
 require('ci_class.php');
 
-/* Include any CI 3.0 Modules autoload.php files */
+/* Include any Modules autoload.php files */
 $modules = glob(APPPATH.'modules/*');
 foreach ($modules as $m) @include($m.'/config/autoload.php');
-
-/*
-load the controller class and the controller extensions
-not sure why the MY Controller with multi extended controller classes doesn't work any more? CI 3.0?
-*/
-include(BASEPATH.'core/Controller.php');
-include(APPPATH.'core/MY_Controller.php');
-

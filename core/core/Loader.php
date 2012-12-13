@@ -907,8 +907,8 @@ class CI_Loader {
 
 				// Include extension followed by base, so extension overrides base functions
 				// If this is for a base class, the order won't matter
-				include_once($path);
 				include_once($base);
+				include_once($path);
 				return TRUE;
 			}
 		}
