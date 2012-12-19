@@ -8,7 +8,7 @@ class theme_plugin extends Parser_plugin {
 
 	public function include_action() {
 		$file = $this->get('file');
-		$data = array_merge($this->load->_ci_cached_vars,$this->args);
+		$data = array_merge($this->CI->load->_ci_cached_vars,$this->args);
 		return $this->CI->parser->parse($file,$data,TRUE);
 	}
 	

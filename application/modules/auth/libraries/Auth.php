@@ -1,10 +1,13 @@
 <?php if (!defined('BASEPATH')) exit('No direct script access allowed');
 
-class Auth extends ci_class {
+class Auth {
   /* try to load and attach the profile if it's valid */
   public function __construct()
   {
+  	public $CI;
+  
     parent::__construct();
+    $this->CI = get_instance();
     
     $this->CI->profile = new stdClass();
 

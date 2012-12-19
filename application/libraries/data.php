@@ -2,9 +2,12 @@
 
 /* oop wrapper for CI views _ci_cached_vars */
 /* to use my pages class and parser you must use this */
-class Data extends ci_class {
+class Data {
+	public $CI;
+	
 	function __construct() {
-		parent::__construct();
+		$this->CI = get_instance();
+		
 		if (!is_array($this->CI->load->_ci_cached_vars))
 			$this->CI->load->_ci_cached_vars = array();
 	}

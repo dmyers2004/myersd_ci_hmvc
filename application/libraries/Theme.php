@@ -1,15 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class theme extends ci_class {
+class Theme {
 	public $assets = array('css'=>'','js'=>'','meta'=>'','extra'=>'');	
   public $cache = array();
   public $search = array();
   public $body_id = '';
   public $body_class = '';
+  public $CI;
 
   public function __construct($config = array()) {
-		parent::__construct();
-    $this->load_config('theme');
+		$this->CI = get_instance();
+
+    $this->config = $this->CI->settings->get_settings_by_group('theme');
 
     /* run the autoloaders */
     foreach ($this->config['autoload']['css'] as $file) $this->addCss($file);
@@ -17,8 +19,8 @@ class theme extends ci_class {
     foreach ($this->config['autoload']['meta'] as $key => $value) $this->addMeta($key,$value);
     foreach ($this->config['autoload']['extra'] as $content) $this->addExtra($content);
     		
-    $class = substr($this->router->fetch_class(),11);
-    $method = $this->router->fetch_method();
+    $class = substr($this->CI->router->fetch_class(),11);
+    $method = $this->CI->router->fetch_method();
 		
 		$this->body_id = $class.'_'.$method;
 		$this->body_class = $class.' '.$method;
@@ -98,41 +100,21 @@ class theme extends ci_class {
 	
 	/* !todo add sep functions */
 	public function removeCss($name) {
-		
+		unset($this->assets['css'][md5($name)]);	
 	}
 	
 	public function removeJs($name) {
-	
+		unset($this->assets['js'][md5($name)]);	
 	}
 	
 	public function removeMeta($name) {
-	
+		unset($this->assets['meta'][md5($name)]);	
 	}
 	
 	public function removeExtra($name) {
-	
+		unset($this->assets['extra'][md5($name)]);	
 	}
 	
-	public function removeAsset($path) {
-		$md5 = md5($path);
-		unset($this->cache[$md5]);
-		$ext = substr($path,-3);
-		if ($ext == '.js') {
-			unset($this->assets['js'][$md5]);		
-	 		$this->updateData('js');
-		} elseif ($ext == 'css') {		
-			unset($this->assets['css'][$md5]);
-	 		$this->updateData('css');
-		} else {
-			unset($this->assets['meta'][$md5]);
-			unset($this->assets['extra'][$md5]);
-	 		$this->updateData('meta');
-	 		$this->updateData('extra');
-		}
-		
-		return $this;
-	}
-
 	private function addDefault($name) {
 		$this->search = array(md5($name)=>$name) + $this->search;
 		
@@ -167,18 +149,14 @@ class theme extends ci_class {
 	}
 	
 	public function block($view,$name='body') {
-		$this->load->_ci_cached_vars[$name] = $this->parser->parse($view,$this->load->_ci_cached_vars,TRUE);
+		$this->CI->load->_ci_cached_vars[$name] = $this->CI->parser->parse($view,$this->CI->load->_ci_cached_vars,TRUE);
 		return $this;
 	}
 	
 	public function render($template='1column') {
 		/* 1column, 2column-right, 2column-left, 3column */
-		$this->parser->parse('theme/'.$template,$this->load->_ci_cached_vars);
+		$this->CI->parser->parse('theme/'.$template,$this->CI->load->_ci_cached_vars);
 		return $this;
-	}
-
-	public function get_wrapper($which) {
-    return trim(implode(chr(10),@(array)$this->assets[$which])).chr(10);	
 	}
 
 	public function getJs() {
@@ -195,6 +173,10 @@ class theme extends ci_class {
 
 	public function getCss() {
     return $this->get_wrapper('css');	
+	}
+
+	private function get_wrapper($which) {
+    return trim(implode(chr(10),@(array)$this->assets[$which])).chr(10);	
 	}
 
 } /* end class */
