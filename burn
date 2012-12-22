@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+$argv = $_SERVER["argv"];
+
+/* push off the burn command */
+$dummy = array_shift($argv);
+
+/* location of root index.php */
+$where_is_index = 'public/';
+
+passthru('cd '.$where_is_index.';php index.php cli/'.implode(' ', $argv));
