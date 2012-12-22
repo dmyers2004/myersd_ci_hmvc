@@ -155,8 +155,7 @@ class Theme {
 	
 	public function render($template='1column') {
 		/* 1column, 2column-right, 2column-left, 3column */
-		$this->CI->parser->parse('theme/'.$template,$this->CI->load->_ci_cached_vars);
-		return $this;
+		return $this->CI->parser->parse('theme/'.$template,$this->CI->load->_ci_cached_vars);
 	}
 
 	public function getJs() {
