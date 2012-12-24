@@ -78,7 +78,7 @@ $autoload['packages'] = array();
 |	$autoload['libraries'] = array('database', 'email', 'xmlrpc');
 */
 
-$autoload['libraries'] = array('cache','data','settings','application','database','parser','theme');
+$autoload['libraries'] = array('cache','data','settings','application','theme','database','parser');
 
 
 /*
@@ -156,4 +156,11 @@ $autoload['model'] = array();
 /* End of file autoload.php */
 /* Location: ./application/config/autoload.php */
 
-require(APPPATH.'third_party/init.php');
+/* PHP Composer autoloader */
+require(APPPATH.'../vendor/autoload.php');
+
+/* Include any Modules autoload.php files */
+$modules = glob(APPPATH.'modules/*');
+foreach ($modules as $module) {
+	@include($module.'/config/autoload.php');
+}

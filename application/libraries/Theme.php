@@ -6,12 +6,16 @@ class Theme {
   public $search = array();
   public $body_id = '';
   public $body_class = '';
+  public $config = array();
   public $CI;
+  public $plugins = array();
 
   public function __construct($config = array()) {
 		$this->CI = get_instance();
 
-    $this->config = $this->CI->settings->get_settings_by_group('theme');
+    $this->config = $this->CI->load->settings(get_class());
+    
+    $this->plugins = array('theme','settings');
 
     /* run the autoloaders */
     foreach ($this->config['autoload']['css'] as $file) $this->addCss($file);
@@ -19,7 +23,7 @@ class Theme {
     foreach ($this->config['autoload']['meta'] as $key => $value) $this->addMeta($key,$value);
     foreach ($this->config['autoload']['extra'] as $content) $this->addExtra($content);
     		
-    $class = substr($this->CI->router->fetch_class(),11);
+    $class = trim(str_replace('controller','', strtolower($this->CI->router->fetch_class())),'_');
     $method = $this->CI->router->fetch_method();
 		
 		$this->body_id = $class.'_'.$method;
@@ -40,9 +44,11 @@ class Theme {
 		if (!$this->cache) {
 			$path = FCPATH.$this->config['theme folder'];
 			$themes = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($path));
-			foreach ($themes as $key => $name)
-				if (substr(basename($name),0,1) != '.')
+			foreach ($themes as $key => $name) {
+				if (substr(basename($name),0,1) != '.') {
 					$this->cache[substr($key,strpos($key,'/',strlen($path)+1)+1)] = substr($name,strlen(FCPATH)-1);
+				}
+			}
 			$this->CI->cache->save('theme_assets',$this->cache,300);
 		}
 		
@@ -55,33 +61,52 @@ class Theme {
 	public function addCss($name,$media='screen') {
   	$md5 = md5($name);
 	
-		if (!$this->assets['css'][$md5]) { 
-	 		$file = $this->findAsset($name);
-	
-	    if ($file != null) {
-		    $this->assets['css'][$md5] = '<link href="'.$file.'" media="'.$media.'" rel="stylesheet" type="text/css" />';
-	 		} elseif ($this->config['debug']) {
-	    	$this->assets['css'][$md5] = '<!-- Link Not Found '.$name.' -->';
-	    }
+		if (!$this->assets['css'][$md5]) {
+			$this->assets['css'][$md5] = $this->buildcss($name,$media);
 		}
 
   	return $this;
+	}
+	
+	public function insert($view,$args=array(),$rtn=true) {
+		$args = array_merge_recursive($this->CI->load->_ci_cached_vars,$args);
+		return $this->CI->load->view($view,$args,$rtn);
+	}
+	
+	public function buildcss($name,$media='screen') {
+ 		$html = '';
+ 		$file = $this->findAsset($name);
+ 		
+    if ($file != null) {
+	    $html = '<link href="'.$file.'" media="'.$media.'" rel="stylesheet" type="text/css" />';
+ 		} elseif ($this->config['debug']) {
+    	$html = '<!-- Link Not Found '.$name.' -->';
+    }
+	
+		return $html;
 	}
 	
 	public function addJs($name) {
   	$md5 = md5($name);
   	
 		if (!$this->assets['js'][$md5]) { 
-	 		$file = $this->findAsset($name);
-	
-	 		if ($file != null) {
-			  $this->assets['js'][$md5] = '<script src="'.$file.'"></script>';
-	 		} elseif ($this->config['debug']) {
-			  $this->assets['js'][$md5] = '<!-- Script Not Found '.$name.' -->';
-	 		}
+	 		$this->assets['js'][$md5] = $this->findAsset($name);	
 		}
 
   	return $this;
+	}
+
+	public function buildjs($name) {
+		$html = '';
+ 		$file = $this->findAsset($name);
+
+ 		if ($file != null) {
+		  $html = '<script src="'.$file.'"></script>';
+ 		} elseif ($this->config['debug']) {
+		  $html = '<!-- Script Not Found '.$name.' -->';
+ 		}
+ 		
+ 		return $html;
 	}
 
 	public function addExtra($content) {
@@ -89,10 +114,15 @@ class Theme {
  		return $this;
 	}
 
-  public function addMeta($key,$content) {
-  	$this->assets['meta'][md5($key)] = '<meta name="'.$key.'" content="'.$content.'"/>';
+  public function addMeta($name,$content) {
+  	$md5 = md5($name);
+  	$this->assets['meta'][md5($md5)] = $this->buildMeta($name,$content);
   	return $this;
   }
+
+	public function buildMeta($name,$content) {
+		return '<meta name="'.$name.'" content="'.$content.'"/>';
+	}
 
   public function getImage($path) {
   	return findAsset($path);
@@ -100,19 +130,23 @@ class Theme {
 	
 	/* !todo add sep functions */
 	public function removeCss($name) {
-		unset($this->assets['css'][md5($name)]);	
+		unset($this->assets['css'][md5($name)]);
+		return $this;
 	}
 	
 	public function removeJs($name) {
 		unset($this->assets['js'][md5($name)]);	
+		return $this;
 	}
 	
 	public function removeMeta($name) {
 		unset($this->assets['meta'][md5($name)]);	
+		return $this;
 	}
 	
 	public function removeExtra($name) {
 		unset($this->assets['extra'][md5($name)]);	
+		return $this;
 	}
 	
 	private function addDefault($name) {
@@ -138,44 +172,105 @@ class Theme {
 		return $this;
 	}
 
-	public function findAsset($file,$min) {
+	public function findAsset($file,$min=false) {
 		/* external link / direct link */
-    if (substr($file,0,4) == 'http' || substr($file,0,1) == '/') return $file;
+    if (substr($file,0,4) == 'http' || substr($file,0,1) == '/') {
+    	return $file;
+    }
+    
+		if (array_key_exists($file,$this->cache)) {
+			return $this->cache[$file];
+		}
 		
-		if (array_key_exists($file,$this->cache)) return $this->cache[$file];
-		if (array_key_exists($min,$this->cache) && $this->config['use min']) return $this->cache[$min];
+		if (array_key_exists($min,$this->cache) && $this->config['use min']) {
+			return $this->cache[$min];
+		}
 		
 		return null;
 	}
 	
 	public function block($view,$name='body') {
-		$this->CI->load->_ci_cached_vars[$name] = $this->CI->parser->parse($view,$this->CI->load->_ci_cached_vars,TRUE);
+		$this->attach_php_plugins();
+		$this->CI->load->_ci_cached_vars[$name] = $this->CI->load->view($view,$this->CI->load->_ci_cached_vars,TRUE);
 		return $this;
 	}
 	
 	public function render($template='1column') {
+		$this->attach_php_plugins();
 		/* 1column, 2column-right, 2column-left, 3column */
-		return $this->CI->parser->parse('theme/'.$template,$this->CI->load->_ci_cached_vars);
+		$this->CI->load->view('theme/'.$template,$this->CI->load->_ci_cached_vars);
+		return $this;
 	}
 
-	public function getJs() {
-    return $this->get_wrapper('js');	
+	public function js($name=null) {
+		if ($name == null) {
+	    return $this->get_wrapper('js');
+		} else {
+			return $this->buildjs($name);
+		}
 	}
 
-	public function getMeta() {
+	public function meta() {
     return $this->get_wrapper('meta');	
 	}
 
-	public function getExtra() {
+	public function extra() {
     return $this->get_wrapper('extra');	
 	}
 
-	public function getCss() {
-    return $this->get_wrapper('css');	
+	public function css($name=null,$media='screen') {
+		if ($name == null) {
+	    return $this->get_wrapper('css');
+		} else {
+			return $this->buildcss($name,$media);
+		}
+	}
+
+	public function addPlugin($class_name='') {
+		if (!empty($class_name)) {
+			$this->plugins[] = $class_name;
+		}
+		
+		return $this;
 	}
 
 	private function get_wrapper($which) {
     return trim(implode(chr(10),@(array)$this->assets[$which])).chr(10);	
+	}
+	
+	public function attach_php_plugins() {
+		$plugins = new stdclass;
+		
+		foreach ($this->plugins as $plugin) {
+			if (class_exists($plugin,false)) {
+				$plugins->$plugin = &$this->CI->$plugin;
+			}
+		}
+		
+		$this->CI->load->_ci_cached_vars[$this->config['plugin variable name']] = $plugins;
+	}
+
+	public function __get($name) {
+		switch ($name) {
+			case 'css':
+				return $this->css();
+			break;
+			case 'js':
+				return $this->js();
+			break;
+			case 'extra':
+				return $this->extra();
+			break;
+			case 'meta':
+				return $this->meta();
+			break;
+			case 'id':
+				return $this->body_id;
+			break;
+			case 'class':
+				return $this->body_class;
+			break;
+		}
 	}
 
 } /* end class */

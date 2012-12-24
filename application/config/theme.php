@@ -21,3 +21,6 @@ $config['autoload'] = array(
 
 $config['title'] = 'My Site';
 $config['section divider'] = ' / ';
+
+/* attach as view variable CI */
+$config['plugin variable name'] = 'plugin';
