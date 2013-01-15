@@ -50,7 +50,7 @@ class Controller_main extends Public_Controller {
 	 */
 	public function index()
 	{
-		$this->theme->addTheme('redrock')->setSection('Math');
+		$this->theme->addTheme('redrock')->addTitle('Math');
 		//->addCss('css/test.css')->addCss('css/reset.css');
 		$this->theme->block('welcome_message')->render();
 	}

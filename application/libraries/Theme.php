@@ -1,14 +1,17 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Theme {
+  public $CI;
+  public $config = array();
 	public $assets = array('css'=>'','js'=>'','meta'=>'','extra'=>'');	
   public $cache = array();
   public $search = array();
   public $body_id = '';
   public $body_class = '';
-  public $config = array();
-  public $CI;
   public $plugins = array();
+  public $title_main = '';
+  public $title_section = '';
+  public $title_divider = '';
 
   public function __construct($config = array()) {
 		$this->CI = get_instance();
@@ -29,9 +32,8 @@ class Theme {
 		$this->body_id = $class.'_'.$method;
 		$this->body_class = $class.' '.$method;
 
-		$this->title = $this->config['title'];		
-		$this->title_section = '';
-		$this->divider = $this->config['section divider'];
+		$this->title_main = $this->config['title'];	
+		$this->title_divider = $this->config['section divider'];
 		
 		$this->search = $this->config['search path'];
 
@@ -54,7 +56,11 @@ class Theme {
 		
   }
 
-	public function setSection($name) {
+	public function setTitle($name) {
+		$this->title_main = $name;
+	}
+
+	public function addTitle($name) {
 		$this->title_section = $name;
 	}
 
@@ -128,7 +134,6 @@ class Theme {
   	return findAsset($path);
   }
 	
-	/* !todo add sep functions */
 	public function removeCss($name) {
 		unset($this->assets['css'][md5($name)]);
 		return $this;
@@ -235,7 +240,7 @@ class Theme {
 	}
 
 	private function get_wrapper($which) {
-    return trim(implode(chr(10),@(array)$this->assets[$which])).chr(10);	
+    return implode(chr(10),@(array)$this->assets[$which]);	
 	}
 	
 	public function attach_php_plugins() {
@@ -249,7 +254,10 @@ class Theme {
 		
 		$this->CI->load->_ci_cached_vars[$this->config['plugin variable name']] = $plugins;
 	}
-
+	
+	/*
+	* Wrapper for theme plugin
+	*/
 	public function __get($name) {
 		switch ($name) {
 			case 'css':
@@ -269,6 +277,9 @@ class Theme {
 			break;
 			case 'class':
 				return $this->body_class;
+			break;
+			case 'title':
+				return $this->title_main.$this->title_divider.$this->title_section;
 			break;
 		}
 	}
